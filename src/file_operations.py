@@ -6,7 +6,7 @@ from src.models import Category, Product
 file_operations = Path(__file__).parent.parent / "data" / "products.json"
 
 
-def read_json(file: str):
+def read_json(file: str) -> tuple[list[Product], list[Category]]:
     """
     Функция считывания из json файла
     :param file: путь к файлу

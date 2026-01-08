@@ -4,7 +4,7 @@ from unittest.mock import mock_open, patch
 import src.file_operations
 
 
-def test_read_json():
+def test_read_json() -> None:
     mock_data = [
         {
             "name": "Смартфоны",
