@@ -2,6 +2,7 @@ class Product:
     """
     Класс для продуктов
     """
+
     name: str
     description: str
     price: float
@@ -25,6 +26,7 @@ class Category:
     """
     Класс для категорий продуктов
     """
+
     name: str
     description: str
     products: list
