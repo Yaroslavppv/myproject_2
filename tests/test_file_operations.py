@@ -39,8 +39,8 @@ def test_read_json() -> None:
     assert test_products[1].description == "512GB, Gray space"
     assert len(test_categories) == 2
     assert test_categories[1].category_count == 2
-    assert (
-        test_categories[0].products
-        == "Samsung Galaxy C23 Ultra, 180000.0 руб. Остаток: 5\nIphone 15, 210000.0 руб. Остаток: 8\n"
-           "Xiaomi Redmi Note 11, 31000.0 руб. Остаток: 14\n"
-    )
+    assert test_categories[0].products == [
+        "Samsung Galaxy C23 Ultra, 180000.0 руб. Остаток: 5",
+        "Iphone 15, 210000.0 руб. Остаток: 8",
+        "Xiaomi Redmi Note 11, 31000.0 руб. Остаток: 14",
+    ]
