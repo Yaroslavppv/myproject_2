@@ -41,9 +41,12 @@ class Product:
         :param other: Другой продукт
         :return: Суммарная стоимость 2-х продуктов
         """
-        sum_1 = self.__price * self.quantity
-        sum_2 = other.__price * other.quantity
-        return sum_1 + sum_2
+        if type(self) is not type(other):
+            raise TypeError
+        else:
+            sum_1 = self.__price * self.quantity
+            sum_2 = other.__price * other.quantity
+            return sum_1 + sum_2
 
     @classmethod
     def new_product(cls, product_dict: dict) -> Product:
@@ -83,6 +86,80 @@ class Product:
                     self.__price = new_price
             else:
                 self.__price = new_price
+
+
+class Smartphone(Product):
+    """
+    Класс для смартфонов
+    """
+
+    efficiency: float
+    model: str
+    memory: int
+    color: str
+
+    def __init__(
+        self,
+        name: str,
+        descriptions: str,
+        price: float,
+        quantity: int,
+        efficiency: float,
+        model: str,
+        memory: int,
+        color: str,
+    ):
+        """
+        Инициализация классса
+        :param name: Название
+        :param descriptions: Описание
+        :param price: Цена
+        :param quantity: Кол-во
+        :param efficiency: Производительность
+        :param model: Модель
+        :param memory: Память
+        :param color: Цвет
+        """
+        super().__init__(name, descriptions, price, quantity)
+        self.efficiency = efficiency
+        self.model = model
+        self.memory = memory
+        self.color = color
+
+
+class LawnGrass(Product):
+    """
+    Класс для газонной травы
+    """
+
+    country: str
+    germination_period: str
+    color: str
+
+    def __init__(
+        self,
+        name: str,
+        descriptions: str,
+        price: float,
+        quantity: int,
+        country: str,
+        germination_period: str,
+        color: str,
+    ):
+        """
+        Инициализация класса
+        :param name: Название
+        :param descriptions: Описание
+        :param price: Цена
+        :param quantity: Кол-во
+        :param country: Страна
+        :param germination_period: Срок проростания
+        :param color: Цвет
+        """
+        super().__init__(name, descriptions, price, quantity)
+        self.country = country
+        self.germination_period = germination_period
+        self.color = color
 
 
 class Category:
@@ -136,14 +213,18 @@ class Category:
         :param product: Продукт для добавления
         :return:
         """
-        self.__products.append(product)
-        self.product_count += 1
+        if isinstance(product, Product):
+            self.__products.append(product)
+            Category.product_count += 1
+        else:
+            raise TypeError
 
 
 class RangeCategory:
     """
     Итератор, возвращающий поочередно продукты из категории
     """
+
     category: Category
     stop: int
 
