@@ -2,7 +2,7 @@ from typing import Any
 
 import pytest
 
-from src.models import Category, Product, RangeCategory
+from src.models import Category, LawnGrass, Product, RangeCategory, Smartphone
 
 
 @pytest.fixture
@@ -27,8 +27,11 @@ def test_product_str(new_telephon: Product) -> None:
     assert str(new_telephon) == "Телефон, 100.0 руб. Остаток: 4"
 
 
-def test_product_add(new_telephon: Product) -> None:
+def test_product_add(new_telephon: Product, new_lawngrass: LawnGrass, new_smartphone: Smartphone) -> None:
     assert new_telephon + new_telephon == 800.0
+
+    with pytest.raises(TypeError):
+        new_lawngrass + new_smartphone
 
 
 def test_new_product_create(clean_instances: Any) -> None:
@@ -95,6 +98,37 @@ def test_new_product_setter(
 
 
 @pytest.fixture
+def new_smartphone() -> Smartphone:
+    return Smartphone("Телефон", "Описание", 100.0, 5, 95.5, "Модель", 256, "Цвет")
+
+
+def test_smartphone_init(new_smartphone: Smartphone) -> None:
+    assert new_smartphone.name == "Телефон"
+    assert new_smartphone.description == "Описание"
+    assert new_smartphone.price == 100.0
+    assert new_smartphone.quantity == 5
+    assert new_smartphone.efficiency == 95.5
+    assert new_smartphone.model == "Модель"
+    assert new_smartphone.memory == 256
+    assert new_smartphone.color == "Цвет"
+
+
+@pytest.fixture
+def new_lawngrass() -> LawnGrass:
+    return LawnGrass("Трава", "Описание", 500.0, 20, "Страна", "Срок проростания", "Цвет")
+
+
+def test_lawngrass_init(new_lawngrass: LawnGrass) -> None:
+    assert new_lawngrass.name == "Трава"
+    assert new_lawngrass.description == "Описание"
+    assert new_lawngrass.price == 500.0
+    assert new_lawngrass.quantity == 20
+    assert new_lawngrass.country == "Страна"
+    assert new_lawngrass.germination_period == "Срок проростания"
+    assert new_lawngrass.color == "Цвет"
+
+
+@pytest.fixture
 def new_category(new_telephon: Product) -> Category:
     Category.product_count = 0
     Category.category_count = 0
@@ -117,6 +151,9 @@ def test_add_product(new_category: Category, new_telephon: Product) -> None:
         "Телефон, 100.0 руб. Остаток: 4",
     ]
     assert new_category.product_count == 3
+
+    with pytest.raises(TypeError):
+        new_category.add_product("Продукт") # type: ignore
 
 
 def test_category_str(new_category: Category) -> None:
