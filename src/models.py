@@ -312,6 +312,10 @@ class Category(BaseCategory):
             raise TypeError
 
     def middle_price(self) -> float:
+        """
+        Высчитываение среднего ценника по категории
+        :return: средняя цена по категории
+        """
         try:
             products_sum = sum(product.price for product in self.__products)
             return products_sum / len(self.__products)
