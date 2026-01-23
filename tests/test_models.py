@@ -2,7 +2,7 @@ from typing import Any
 
 import pytest
 
-from src.models import Category, LawnGrass, Product, RangeCategory, Smartphone
+from src.models import Category, LawnGrass, Order, Product, RangeCategory, Smartphone
 
 
 @pytest.fixture
@@ -153,11 +153,51 @@ def test_add_product(new_category: Category, new_telephon: Product) -> None:
     assert new_category.product_count == 3
 
     with pytest.raises(TypeError):
-        new_category.add_product("Продукт") # type: ignore
+        new_category.add_product("Продукт")  # type: ignore
 
 
 def test_category_str(new_category: Category) -> None:
     assert str(new_category) == "Телефоны, количество продуктов: 8 шт."
+
+
+def test_order_init() -> None:
+    test_order = Order()
+    assert test_order.price == 0
+    assert test_order.product is None
+    assert test_order.quantity == 0
+    assert test_order.total_price == 0
+
+
+def test_order_add_product(new_telephon: Product) -> None:
+    test_order = Order()
+    test_order.add_product(new_telephon)
+    assert test_order.product == new_telephon
+    assert test_order.price == 100.0
+
+
+def test_order_add_product_exception() -> None:
+    test_order = Order()
+    with pytest.raises(TypeError):
+        test_order.add_product("123")
+
+
+def test_order_add_quantity(new_telephon: Product) -> None:
+    test_order = Order()
+    test_order.add_product(new_telephon)
+    test_order.add_quantity(3)
+    assert test_order.quantity == 3
+    assert test_order.total_price == 300.0
+
+
+def test_order_add_quantity_exception(new_telephon: Product) -> None:
+    test_order = Order()
+    test_order.add_product(new_telephon)
+    with pytest.raises(ValueError) as exc_info:
+        test_order.add_quantity(0)
+        assert str(exc_info.value) == "Значение не может быть меньше или равно 0"
+    with pytest.raises(ValueError) as exc_info:
+        test_order.add_quantity(6)
+        assert str(exc_info.value) == "На складе недостаточно товара"
 
 
 @pytest.fixture

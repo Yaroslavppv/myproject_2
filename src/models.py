@@ -1,20 +1,98 @@
 from __future__ import annotations
 
+from abc import ABC, abstractmethod
 from typing import Any
 
 
-class Product:
+class BaseProduct(ABC):
     """
-    Класс для продуктов
+    Базовый абстрактный класс для продуктов
     """
 
     name: str
     description: str
-    __price: float
+    _price: float
     quantity: int
+
+    def __init__(self, name: str, description: str, price: float, quantity: int):
+        """
+        Инициализация класса
+        :param name: Имя
+        :param description: Описание
+        :param price:  Цена
+        :param quantity: Кол-во
+        """
+        self.name = name
+        self.description = description
+        self._price = price
+        self.quantity = quantity
+        super().__init__()
+
+    @abstractmethod
+    def __str__(self) -> str:
+        """
+        Абстрактный метод для использования в наследуемых классах
+        :return:
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def __add__(self, other: BaseProduct) -> float:
+        """
+        Абстрактный метод для использования в наследуемых классах
+        :param other:
+        :return:
+        """
+        raise NotImplementedError
+
+    @property
+    @abstractmethod
+    def price(self) -> float:
+        """
+        Абстрактный метод для использования в наследуемых классах
+        :return:
+        """
+        raise NotImplementedError
+
+    @price.setter
+    @abstractmethod
+    def price(self, new_price: float) -> None:
+        """
+        Абстрактный метод для использования в наследуемых классах
+        :param new_price:
+        :return:
+        """
+        raise NotImplementedError
+
+
+class MixinProduct:
+    """
+    Миксин класс для отоброжения информации о продукте
+    """
+
+    def __init__(self, *args: Any) -> None:
+        """
+        Инициализация метода
+        :param args:
+        """
+        print(repr(self))
+
+    def __repr__(self) -> str:
+        """
+        Вывод информации о продукте
+        :return: информации о продукте
+        """
+        return f"{self.__class__.__name__}({self.name}, {self.description}, {self.price}, {self.quantity})"
+
+
+class Product(BaseProduct, MixinProduct):
+    """
+    Класс для продуктов
+    """
+
     __instances: list[Product] = []
 
-    def __init__(self, name: str, descriptions: str, price: float, quantity: int):
+    def __init__(self, name: str, description: str, price: float, quantity: int):
         """
         Инициализация класса
         :param name: Название продукта
@@ -22,10 +100,7 @@ class Product:
         :param price: Цена продукта
         :param quantity: Кол-во продукта
         """
-        self.name = name
-        self.description = descriptions
-        self.__price = price
-        self.quantity = quantity
+        super().__init__(name, description, price, quantity)
         self.__instances.append(self)
 
     def __str__(self) -> str:
@@ -44,8 +119,8 @@ class Product:
         if type(self) is not type(other):
             raise TypeError
         else:
-            sum_1 = self.__price * self.quantity
-            sum_2 = other.__price * other.quantity
+            sum_1 = self._price * self.quantity
+            sum_2 = other._price * other.quantity
             return sum_1 + sum_2
 
     @classmethod
@@ -68,7 +143,7 @@ class Product:
         Отображение цены товара
         :return: цена товара
         """
-        return self.__price
+        return self._price
 
     @price.setter
     def price(self, new_price: float) -> None:
@@ -80,12 +155,12 @@ class Product:
         if new_price <= 0:
             print("Цена не должна быть нулевая или отрицательная")
         else:
-            if self.__price > new_price:
+            if self._price > new_price:
                 user_input = input("Введите подтверждение для снижения цены: Для подтверждения - Y\n")
                 if user_input.lower() == "y":
-                    self.__price = new_price
+                    self._price = new_price
             else:
-                self.__price = new_price
+                self._price = new_price
 
 
 class Smartphone(Product):
@@ -162,7 +237,22 @@ class LawnGrass(Product):
         self.color = color
 
 
-class Category:
+class BaseCategory(ABC):
+    """
+    Базовый абстрактный класс для категорий
+    """
+
+    @abstractmethod
+    def add_product(self, product: Product) -> None:
+        """
+        Абстрактный метод для использования в наследуемых классах
+        :param product:
+        :return:
+        """
+        raise NotImplementedError
+
+
+class Category(BaseCategory):
     """
     Класс для категорий продуктов
     """
@@ -218,6 +308,53 @@ class Category:
             Category.product_count += 1
         else:
             raise TypeError
+
+
+class Order(BaseCategory):
+    """
+    Класс заказов
+    """
+
+    product: Product | None
+    quantity: int
+    price: float
+    total_price: float
+
+    def __init__(self):
+        """
+        Инициализация класса
+        """
+        self.product = None
+        self.total_price = 0
+        self.price = 0
+        self.quantity = 0
+
+    def add_product(self, product: Product) -> None:
+        """
+        Добавление продукта в заказ
+        :param product: Продукт
+        :return:
+        """
+        if isinstance(product, Product):
+            self.product = product
+            self.price = product.price
+        else:
+            raise TypeError
+
+    def add_quantity(self, quantity: int):
+        """
+        Добавление кол-ва продуктов в заказ
+        :param quantity: Кол-во
+        :return:
+        """
+        if quantity > 0:
+            if quantity > self.product.quantity:
+                raise ValueError("На складе недостаточно товара")
+            else:
+                self.quantity = quantity
+                self.total_price = self.quantity * self.price
+        else:
+            raise ValueError("Значение не может быть меньше или равно 0")
 
 
 class RangeCategory:
