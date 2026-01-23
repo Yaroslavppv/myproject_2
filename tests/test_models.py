@@ -23,6 +23,12 @@ def test_product_init(new_telephon: Product) -> None:
     assert new_telephon.quantity == 4
 
 
+def test_product_init_quantity_zero() -> None:
+    with pytest.raises(ValueError) as error:
+        Product("Телефон", "Описание телефона", 100.0, 0)
+        assert error.value == "Товар с нулевым количеством не может быть добавлен"
+
+
 def test_product_str(new_telephon: Product) -> None:
     assert str(new_telephon) == "Телефон, 100.0 руб. Остаток: 4"
 
@@ -158,6 +164,15 @@ def test_add_product(new_category: Category, new_telephon: Product) -> None:
 
 def test_category_str(new_category: Category) -> None:
     assert str(new_category) == "Телефоны, количество продуктов: 8 шт."
+
+
+def test_middle_price(new_category: Category) -> None:
+    assert new_category.middle_price() == 100.0
+
+
+def test_middle_price_zero() -> None:
+    category_empty = Category("Пустая категория", "Категория без продуктов", [])
+    assert category_empty.middle_price() == 0
 
 
 def test_order_init() -> None:
