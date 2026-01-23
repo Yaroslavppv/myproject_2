@@ -22,6 +22,8 @@ class BaseProduct(ABC):
         :param price:  Цена
         :param quantity: Кол-во
         """
+        if quantity == 0:
+            raise ValueError("Товар с нулевым количеством не может быть добавлен")
         self.name = name
         self.description = description
         self._price = price
@@ -308,6 +310,13 @@ class Category(BaseCategory):
             Category.product_count += 1
         else:
             raise TypeError
+
+    def middle_price(self) -> float:
+        try:
+            products_sum = sum(product.price for product in self.__products)
+            return products_sum / len(self.__products)
+        except ZeroDivisionError:
+            return 0.0
 
 
 class Order(BaseCategory):
