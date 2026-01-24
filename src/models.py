@@ -22,13 +22,21 @@ class BaseProduct(ABC):
         :param price:  Цена
         :param quantity: Кол-во
         """
-        if quantity == 0:
-            raise ValueError("Товар с нулевым количеством не может быть добавлен")
         self.name = name
         self.description = description
         self._price = price
         self.quantity = quantity
         super().__init__()
+
+    @property
+    def quantity(self):
+        return self._quantity
+
+    @quantity.setter
+    def quantity(self, value):
+        if value <= 0:
+            raise ValueError("Товар с нулевым или отрицательным количеством не может быть добавлен")
+        self._quantity = value
 
     @abstractmethod
     def __str__(self) -> str:
