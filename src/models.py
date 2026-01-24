@@ -29,7 +29,7 @@ class BaseProduct(ABC):
         super().__init__()
 
     @property
-    def quantity(self):
+    def quantity(self) -> int:
         """
         Отображение кол-ва товара
         :return:
@@ -37,7 +37,7 @@ class BaseProduct(ABC):
         return self._quantity
 
     @quantity.setter
-    def quantity(self, value):
+    def quantity(self, value: int) -> None:
         """
         Изменение кол-ва товара
         :param value: значение
