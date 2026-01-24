@@ -30,10 +30,19 @@ class BaseProduct(ABC):
 
     @property
     def quantity(self):
+        """
+        Отображение кол-ва товара
+        :return:
+        """
         return self._quantity
 
     @quantity.setter
     def quantity(self, value):
+        """
+        Изменение кол-ва товара
+        :param value: значение
+        :return:
+        """
         if value <= 0:
             raise ValueError("Товар с нулевым или отрицательным количеством не может быть добавлен")
         self._quantity = value
