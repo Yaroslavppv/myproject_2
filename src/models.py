@@ -28,6 +28,25 @@ class BaseProduct(ABC):
         self.quantity = quantity
         super().__init__()
 
+    @property
+    def quantity(self) -> int:
+        """
+        Отображение кол-ва товара
+        :return:
+        """
+        return self._quantity
+
+    @quantity.setter
+    def quantity(self, value: int) -> None:
+        """
+        Изменение кол-ва товара
+        :param value: значение
+        :return:
+        """
+        if value <= 0:
+            raise ValueError("Товар с нулевым или отрицательным количеством не может быть добавлен")
+        self._quantity = value
+
     @abstractmethod
     def __str__(self) -> str:
         """
@@ -308,6 +327,17 @@ class Category(BaseCategory):
             Category.product_count += 1
         else:
             raise TypeError
+
+    def middle_price(self) -> float:
+        """
+        Высчитываение среднего ценника по категории
+        :return: средняя цена по категории
+        """
+        try:
+            products_sum = sum(product.price for product in self.__products)
+            return products_sum / len(self.__products)
+        except ZeroDivisionError:
+            return 0.0
 
 
 class Order(BaseCategory):
